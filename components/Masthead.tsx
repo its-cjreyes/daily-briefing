@@ -14,11 +14,11 @@ function formatDate(dateStr: string): string {
 
 export default function Masthead({ date }: Props) {
   return (
-    <header className="flex items-baseline justify-between border-b border-border-subtle pb-8">
-      <h1 className="font-serif text-5xl font-normal italic text-ink tracking-tight">
+    <header className="flex items-center justify-between border-b border-border-subtle pb-7">
+      <h1 className="font-sans text-[1.65rem] font-bold tracking-[-0.03em] text-ink">
         Briefing
       </h1>
-      <p className="font-sans text-sm text-muted tracking-wide">
+      <p className="font-sans text-[11px] font-medium text-muted tracking-label uppercase">
         {formatDate(date)}
       </p>
     </header>

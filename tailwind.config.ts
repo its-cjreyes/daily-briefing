@@ -9,22 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: '#0f0f0f',
+        canvas: '#8a9490',
         ink: '#f0ede6',
-        muted: '#8a8680',
-        dim: '#4a4744',
-        accent: '#c9a96e',
-        'accent-bright': '#e0c080',
-        'surface': '#141414',
-        'surface-2': '#1a1a1a',
-        'border-subtle': 'rgba(201, 169, 110, 0.15)',
+        muted: 'rgba(240, 237, 230, 0.65)',
+        dim: 'rgba(255, 255, 255, 0.35)',
+        warm: '#E8DDD0',
+        accent: '#C94F3A',
+        'accent-hover': '#a83d2b',
+        surface: '#7a8784',
+        'surface-2': '#717e7a',
+        'border-subtle': 'rgba(255, 255, 255, 0.15)',
       },
       fontFamily: {
-        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
-        sans: ['var(--font-ibm-plex)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['var(--font-dm-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        // No separate serif — everything is DM Sans
+        serif: ['var(--font-dm-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       letterSpacing: {
-        'widest-plus': '0.12em',
+        'label': '0.14em',
       },
     },
   },

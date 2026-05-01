@@ -4,7 +4,17 @@ import { useState, useEffect } from 'react';
 import type { Briefing } from '@/lib/types';
 import Masthead from './Masthead';
 import BriefingSectionComponent from './BriefingSection';
-import ChatSidebar from './ChatSidebar';
+
+const FONT_STACK = `'DM Sans', ui-sans-serif, system-ui, sans-serif`;
+
+function formatDate(dateStr: string): string {
+  const [year, month, day] = dateStr.split('-').map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+}
 
 interface Props {
   briefing: Briefing;
@@ -12,74 +22,81 @@ interface Props {
 }
 
 export default function BriefingPageClient({ briefing, initialSection }: Props) {
-  const [activeSectionSlug, setActiveSectionSlug] = useState<string | null>(null);
+  const [openSlug, setOpenSlug] = useState<string | null>(initialSection ?? null);
+  const [showStickyHeader, setShowStickyHeader] = useState(false);
 
-  // Handle deep-link from email: ?section=slug
   useEffect(() => {
-    if (!initialSection) return;
+    const onScroll = () => setShowStickyHeader(window.scrollY > 80);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-    const section = briefing.sections.find(s => s.slug === initialSection);
-    if (!section) return;
-
-    // Small delay to ensure the DOM is ready
-    const timeout = setTimeout(() => {
-      const el = document.getElementById(initialSection);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-      setActiveSectionSlug(initialSection);
-    }, 120);
-
-    return () => clearTimeout(timeout);
-  }, [initialSection, briefing.sections]);
-
-  const activeSection = briefing.sections.find(s => s.slug === activeSectionSlug) ?? null;
-  const chatOpen = activeSectionSlug !== null;
+  function handleToggle(slug: string) {
+    setOpenSlug(prev => prev === slug ? null : slug);
+  }
 
   return (
-    <div className="min-h-screen bg-canvas">
-      {/* Main content — shrinks on desktop when chat is open */}
-      <div
-        className={`transition-[margin] duration-300 ease-in-out ${
-          chatOpen ? 'lg:mr-[420px]' : ''
-        }`}
+    <div className="min-h-screen" style={{ background: 'radial-gradient(ellipse at 30% 20%, #8a9490 0%, #5a6b65 60%, #4a5c56 100%)' }}>
+
+      {/* ── Sticky frosted glass header ── */}
+      <header
+        aria-hidden={!showStickyHeader}
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          zIndex: 100,
+          background: 'rgba(90, 107, 101, 0.6)',
+          backdropFilter: 'blur(16px)',
+          WebkitBackdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(255,255,255,0.1)',
+          padding: '12px 24px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          transform: showStickyHeader ? 'translateY(0)' : 'translateY(-100%)',
+          transition: 'transform 0.3s ease',
+        }}
       >
-        <div className="max-w-2xl mx-auto px-6 py-16">
-          <Masthead date={briefing.date} />
+        <span style={{ fontFamily: FONT_STACK, fontSize: '18px', fontWeight: 700, letterSpacing: '-0.03em', color: '#f0ede6' }}>
+          Briefing
+        </span>
+        <span style={{ fontFamily: FONT_STACK, fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
+          {formatDate(briefing.date)}
+        </span>
+      </header>
 
-          <div className="mt-16">
-            {briefing.sections.map((section, i) => (
-              <div key={section.slug}>
-                {i > 0 && (
-                  <hr className="border-0 border-t border-border-subtle my-16" />
-                )}
-                <BriefingSectionComponent
-                  section={section}
-                  onChat={() => setActiveSectionSlug(section.slug)}
-                />
-              </div>
-            ))}
-          </div>
-
-          <footer className="mt-20 pb-8 border-t border-border-subtle pt-8">
-            <p className="font-sans text-dim text-xs text-center tracking-wide">
-              Generated {new Date(briefing.generatedAt).toLocaleTimeString('en-US', {
-                hour: 'numeric',
-                minute: '2-digit',
-                timeZone: 'America/New_York',
-              })} ET
-            </p>
-          </footer>
-        </div>
+      <div className="max-w-2xl mx-auto px-6 pt-12 pb-10">
+        <Masthead date={briefing.date} />
       </div>
 
-      {/* Chat sidebar */}
-      {chatOpen && activeSection && (
-        <ChatSidebar
-          section={activeSection}
-          onClose={() => setActiveSectionSlug(null)}
-        />
-      )}
+      <div className="max-w-2xl mx-auto px-3 pb-6">
+        {briefing.sections.map((section) => (
+          <div key={section.slug} style={{ marginBottom: '12px' }}>
+            <BriefingSectionComponent
+              section={section}
+              isOpen={openSlug === section.slug}
+              onToggle={() => handleToggle(section.slug)}
+            />
+          </div>
+        ))}
+      </div>
+
+      <div className="max-w-2xl mx-auto px-6">
+        <footer className="py-10 border-t border-border-subtle">
+          <p className="font-sans text-[10px] font-medium tracking-label uppercase text-dim text-center">
+            Generated{' '}
+            {new Date(briefing.generatedAt).toLocaleTimeString('en-US', {
+              hour: 'numeric',
+              minute: '2-digit',
+              timeZone: 'America/New_York',
+            })}{' '}
+            ET
+          </p>
+        </footer>
+      </div>
+
     </div>
   );
 }
