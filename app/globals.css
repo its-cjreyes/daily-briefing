@@ -7,6 +7,16 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Spinner for regenerate button */
+@keyframes spin-cw {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.spin {
+  display: inline-block;
+  animation: spin-cw 0.9s linear infinite;
+}
+
 /* Scrollbar — minimal dark */
 ::-webkit-scrollbar {
   width: 5px;

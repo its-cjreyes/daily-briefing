@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import type { Briefing } from '@/lib/types';
 import Masthead from './Masthead';
 import BriefingSectionComponent from './BriefingSection';
+import RegenerateButton from './RegenerateButton';
 
 const FONT_STACK = `'DM Sans', ui-sans-serif, system-ui, sans-serif`;
 
@@ -62,9 +63,12 @@ export default function BriefingPageClient({ briefing, initialSection }: Props) 
         <span style={{ fontFamily: FONT_STACK, fontSize: '18px', fontWeight: 700, letterSpacing: '-0.03em', color: '#f0ede6' }}>
           Briefing
         </span>
-        <span style={{ fontFamily: FONT_STACK, fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
-          {formatDate(briefing.date)}
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <RegenerateButton />
+          <span style={{ fontFamily: FONT_STACK, fontSize: '10px', fontWeight: 600, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
+            {formatDate(briefing.date)}
+          </span>
+        </div>
       </header>
 
       <div className="max-w-2xl mx-auto px-6 pt-12 pb-10">

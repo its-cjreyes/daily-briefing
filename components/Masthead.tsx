@@ -1,3 +1,5 @@
+import RegenerateButton from './RegenerateButton';
+
 interface Props {
   date: string;
 }
@@ -18,9 +20,12 @@ export default function Masthead({ date }: Props) {
       <h1 className="font-sans text-[1.65rem] font-bold tracking-[-0.03em] text-ink">
         Briefing
       </h1>
-      <p className="font-sans text-[11px] font-medium text-muted tracking-label uppercase">
-        {formatDate(date)}
-      </p>
+      <div className="flex items-center gap-3">
+        <RegenerateButton />
+        <p className="font-sans text-[11px] font-medium text-muted tracking-label uppercase">
+          {formatDate(date)}
+        </p>
+      </div>
     </header>
   );
 }
