@@ -54,7 +54,7 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
     },
     {
       "slug": "deep-dive",
-      "label": "One Thing Worth Understanding Deeply",
+      "label": "One Thing Worth Understanding",
       "headline": "...",
       "digest": "...",
       "summary": "...",

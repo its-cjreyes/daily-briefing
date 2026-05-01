@@ -136,7 +136,7 @@ export async function sendFailureEmail(
   sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
   const formattedDate = formatEmailDate(date);
-  const appUrl = (process.env.APP_URL ?? '').replace(/\/$/, '');
+  const appUrl = (process.env.APP_URL ?? 'https://daily-briefing-umber.vercel.app').replace(/\/$/, '');
 
   const lines = [
     `Your morning briefing for ${formattedDate} could not be generated.`,
@@ -176,7 +176,7 @@ export async function sendFailureEmail(
 export async function sendBriefingEmail(briefing: Briefing): Promise<void> {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY!);
 
-  const appUrl = (process.env.APP_URL ?? '').replace(/\/$/, '');
+  const appUrl = (process.env.APP_URL ?? 'https://daily-briefing-umber.vercel.app').replace(/\/$/, '');
   const formattedDate = formatEmailDate(briefing.date);
 
   await sgMail.send({
