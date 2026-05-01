@@ -133,7 +133,7 @@ export default function BriefingSectionComponent({ section, isOpen, onToggle }: 
               className="mt-9 inline-flex items-center gap-2 px-5 py-[9px] rounded-full font-sans text-[10px] font-semibold tracking-label uppercase transition-[background-color,color] duration-200 hover:bg-[rgba(201,79,58,0.15)]"
               style={
                 copied
-                  ? { background: 'rgba(34, 197, 94, 0.15)', color: '#16a34a' }
+                  ? { background: 'rgba(255, 255, 255, 0.7)', color: '#C94F3A' }
                   : { background: '#ffffff', color: '#C94F3A' }
               }
             >
