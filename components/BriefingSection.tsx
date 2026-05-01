@@ -122,9 +122,9 @@ export default function BriefingSectionComponent({ section, isOpen, onToggle }: 
             <hr className="border-0 border-t border-white/[0.2] mb-7" />
 
             {/* Body copy */}
-            <div className="font-sans text-[15px] leading-[1.8] text-white space-y-5">
+            <div className="font-serif text-[16px] md:text-[17px] leading-[1.85] text-white space-y-5">
               {section.full.split('\n\n').map((para, i) => (
-                <p key={i}>{para}</p>
+                <p key={i} style={{ textAlign: 'justify', hyphens: 'auto' }}>{para}</p>
               ))}
             </div>
 
