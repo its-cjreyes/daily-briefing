@@ -3,6 +3,7 @@ export interface BriefingSection {
   label: string;
   headline: string;
   digest: string;
+  summary: string;
   full: string;
 }
 

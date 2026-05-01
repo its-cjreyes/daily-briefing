@@ -17,6 +17,7 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
       "label": "Geopolitics",
       "headline": "A specific, compelling headline",
       "digest": "One sentence capturing what happened and why it matters.",
+      "summary": "2-3 sentences providing enough context for a reader to ask an informed follow-up question. Cover the key facts, why this matters, and what's at stake.",
       "full": "First paragraph.\\n\\nSecond paragraph.\\n\\nThird paragraph.\\n\\nFourth paragraph (optional).\\n\\nFifth paragraph (optional)."
     },
     {
@@ -24,6 +25,7 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
       "label": "Canadian Politics",
       "headline": "...",
       "digest": "...",
+      "summary": "...",
       "full": "..."
     },
     {
@@ -31,6 +33,7 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
       "label": "AI & Tech",
       "headline": "...",
       "digest": "...",
+      "summary": "...",
       "full": "..."
     },
     {
@@ -38,6 +41,7 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
       "label": "Markets & Economy",
       "headline": "...",
       "digest": "...",
+      "summary": "...",
       "full": "..."
     },
     {
@@ -45,6 +49,7 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
       "label": "Culture",
       "headline": "...",
       "digest": "...",
+      "summary": "...",
       "full": "..."
     },
     {
@@ -52,11 +57,14 @@ Return your response as a valid JSON object ONLY — no markdown, no code blocks
       "label": "One Thing Worth Understanding Deeply",
       "headline": "...",
       "digest": "...",
+      "summary": "...",
       "full": "..."
     }
   ]
 }
 
+For each "digest" field: one sentence, what happened and why it matters.
+For each "summary" field: 2-3 sentences of context — enough for a reader to ask an informed follow-up question. Cover the key facts, stakes, and what to watch.
 For each "full" field: write 3–5 substantial paragraphs separated by \\n\\n. Go beyond surface facts — provide historical context, the key players and their motivations, what's at stake, and what to watch for. Aim for the kind of clarity that makes a smart non-expert feel they truly understand the story.`;
 
 function makeClient(): Anthropic {

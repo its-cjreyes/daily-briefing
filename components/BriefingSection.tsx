@@ -32,11 +32,12 @@ export default function BriefingSectionComponent({ section, isOpen, onToggle }: 
 
   async function handleCopy(e: React.MouseEvent) {
     e.stopPropagation();
+    const context = section.summary ?? section.digest;
     const text = [
       `[${section.label.toUpperCase()}]`,
       section.headline,
       '',
-      section.full,
+      context,
       '',
       `My question: ${SUGGESTED_PROMPTS[section.slug] ?? ''}`,
     ].join('\n');
