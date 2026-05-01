@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import type { BriefingSection } from '@/lib/types';
 
 const SUGGESTED_PROMPTS: Record<string, string> = {
@@ -12,31 +12,6 @@ const SUGGESTED_PROMPTS: Record<string, string> = {
   'deep-dive': "Go even deeper on today's topic — what's the most surprising thing most people don't know about this?",
 };
 
-function buildSummary(full: string): string {
-  const firstPara = (full.split('\n\n')[0] ?? '').trim();
-  const sentences = firstPara.match(/[^.!?]+[.!?]+/g) ?? [firstPara];
-  let summary = '';
-  for (const s of sentences.slice(0, 3)) {
-    if (summary.length + s.length > 400) break;
-    summary += s;
-  }
-  return summary.trim() || firstPara.slice(0, 400);
-}
-
-function buildClaudeUrl(section: BriefingSection): string {
-  const label = section.label.toUpperCase();
-  const suggestedPrompt = SUGGESTED_PROMPTS[section.slug] ?? '';
-  const summary = buildSummary(section.full);
-  const prompt = [
-    `[${label}] ${section.headline}`,
-    '',
-    `Summary: ${summary}`,
-    '',
-    `My question: ${suggestedPrompt}`,
-  ].join('\n');
-  return `https://claude.ai/new?q=${encodeURIComponent(prompt)}`;
-}
-
 interface Props {
   section: BriefingSection;
   isOpen: boolean;
@@ -45,6 +20,7 @@ interface Props {
 
 export default function BriefingSectionComponent({ section, isOpen, onToggle }: Props) {
   const sectionRef = useRef<HTMLElement>(null);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -53,6 +29,22 @@ export default function BriefingSectionComponent({ section, isOpen, onToggle }: 
     }, 420);
     return () => clearTimeout(timeout);
   }, [isOpen]);
+
+  async function handleCopy(e: React.MouseEvent) {
+    e.stopPropagation();
+    const text = [
+      `[${section.label.toUpperCase()}]`,
+      section.headline,
+      '',
+      section.full,
+      '',
+      `My question: ${SUGGESTED_PROMPTS[section.slug] ?? ''}`,
+    ].join('\n');
+
+    await navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
 
   return (
     <section
@@ -128,23 +120,25 @@ export default function BriefingSectionComponent({ section, isOpen, onToggle }: 
             {/* Hairline divider between header and body */}
             <hr className="border-0 border-t border-white/[0.2] mb-7" />
 
-            {/* Body copy — full white for contrast against sage cards */}
+            {/* Body copy */}
             <div className="font-sans text-[15px] leading-[1.8] text-white space-y-5">
               {section.full.split('\n\n').map((para, i) => (
                 <p key={i}>{para}</p>
               ))}
             </div>
 
-            {/* Pill CTA — solid white, orange text */}
-            <a
-              href={buildClaudeUrl(section)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-9 inline-flex items-center gap-2 px-5 py-[9px] rounded-full bg-white text-accent hover:bg-[rgba(201,79,58,0.15)] font-sans text-[10px] font-semibold tracking-label uppercase transition-[background-color] duration-200"
-              onClick={e => e.stopPropagation()}
+            {/* Copy & Ask pill CTA */}
+            <button
+              onClick={handleCopy}
+              className="mt-9 inline-flex items-center gap-2 px-5 py-[9px] rounded-full font-sans text-[10px] font-semibold tracking-label uppercase transition-[background-color,color] duration-200 hover:bg-[rgba(201,79,58,0.15)]"
+              style={
+                copied
+                  ? { background: 'rgba(34, 197, 94, 0.15)', color: '#16a34a' }
+                  : { background: '#ffffff', color: '#C94F3A' }
+              }
             >
-              Ask Claude <span aria-hidden="true">→</span>
-            </a>
+              {copied ? 'COPIED ✓' : 'COPY & ASK →'}
+            </button>
           </div>
         </div>
       </div>
