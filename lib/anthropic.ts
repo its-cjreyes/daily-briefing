@@ -152,6 +152,15 @@ export async function generateBriefing(date: string): Promise<Briefing> {
   throw new Error('Exceeded max iterations without a final response');
 }
 
+const FALLBACK_LABELS: Record<string, string> = {
+  'geopolitics': 'Geopolitics',
+  'canadian-politics': 'Canadian Politics',
+  'ai-tech': 'AI & Tech',
+  'markets-economy': 'Markets & Economy',
+  'culture': 'Culture',
+  'deep-dive': 'One Thing Worth Understanding',
+};
+
 function parseBriefingJson(text: string, date: string): Briefing {
   // Strip any accidental markdown fences
   const cleaned = text.replace(/^```(?:json)?\n?/m, '').replace(/\n?```$/m, '').trim();
@@ -159,15 +168,37 @@ function parseBriefingJson(text: string, date: string): Briefing {
   const jsonMatch = cleaned.match(/\{[\s\S]*\}/);
   if (!jsonMatch) throw new Error('No JSON object found in model response');
 
-  const parsed = JSON.parse(jsonMatch[0]) as { sections: BriefingSection[] };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const parsed = JSON.parse(jsonMatch[0]) as { sections: any[] };
 
   if (!Array.isArray(parsed.sections) || parsed.sections.length === 0) {
     throw new Error('Parsed JSON is missing sections array');
   }
 
+  // Log raw keys from the first section so we can inspect model output in Vercel logs
+  console.log('[parse] first section keys:', Object.keys(parsed.sections[0]));
+  console.log('[parse] first section sample:', JSON.stringify(parsed.sections[0]).slice(0, 300));
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const sections: BriefingSection[] = parsed.sections.map((s: any, i: number) => {
+    const slug: string = s.slug ?? s.id ?? s.section_id ?? String(i);
+    // Haiku may use name/title/category/section_name instead of label
+    const label: string =
+      s.label ?? s.name ?? s.title ?? s.category ?? s.section_name ?? s.section_label ??
+      FALLBACK_LABELS[slug] ?? slug;
+    return {
+      slug,
+      label,
+      headline: s.headline ?? s.title_headline ?? s.heading ?? '',
+      digest: s.digest ?? s.summary_short ?? s.brief ?? '',
+      summary: s.summary ?? s.context ?? s.overview ?? '',
+      full: s.full ?? s.full_text ?? s.body ?? s.content ?? '',
+    };
+  });
+
   return {
     date,
-    sections: parsed.sections,
+    sections,
     generatedAt: new Date().toISOString(),
   };
 }
