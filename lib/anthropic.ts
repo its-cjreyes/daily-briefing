@@ -181,18 +181,19 @@ function parseBriefingJson(text: string, date: string): Briefing {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sections: BriefingSection[] = parsed.sections.map((s: any, i: number) => {
-    const slug: string = s.slug ?? s.id ?? s.section_id ?? String(i);
-    // Haiku may use name/title/category/section_name instead of label
+    const slug: string =
+      (s.slug || s.id || s.section_id || String(i));
+    // Use || (not ??) so empty strings also fall through to the fallback
+    const rawLabel = s.label || s.name || s.title || s.category || s.section_name || s.section_label;
     const label: string =
-      s.label ?? s.name ?? s.title ?? s.category ?? s.section_name ?? s.section_label ??
-      FALLBACK_LABELS[slug] ?? slug;
+      (rawLabel && String(rawLabel).trim()) || FALLBACK_LABELS[slug] || slug;
     return {
       slug,
       label,
-      headline: s.headline ?? s.title_headline ?? s.heading ?? '',
-      digest: s.digest ?? s.summary_short ?? s.brief ?? '',
-      summary: s.summary ?? s.context ?? s.overview ?? '',
-      full: s.full ?? s.full_text ?? s.body ?? s.content ?? '',
+      headline: s.headline || s.title_headline || s.heading || '',
+      digest: s.digest || s.summary_short || s.brief || '',
+      summary: s.summary || s.context || s.overview || '',
+      full: s.full || s.full_text || s.body || s.content || '',
     };
   });
 
