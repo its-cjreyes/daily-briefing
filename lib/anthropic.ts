@@ -1,7 +1,7 @@
 import Anthropic from '@anthropic-ai/sdk';
 import type { Briefing, BriefingSection } from './types';
 
-const MODEL = 'claude-sonnet-4-6';
+const MODEL = 'claude-haiku-4-5-20251001';
 const MAX_ITERATIONS = 12;
 
 const SYSTEM_PROMPT = `You are a senior editor at a world-class daily intelligence briefing. Your writing is incisive, analytically rigorous, and a cut above standard news summaries — the kind a smart, curious person reads every morning to feel genuinely informed.
