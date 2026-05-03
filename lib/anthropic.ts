@@ -152,6 +152,10 @@ export async function generateBriefing(date: string): Promise<Briefing> {
   throw new Error('Exceeded max iterations without a final response');
 }
 
+function stripCitations(text: string): string {
+  return text.replace(/<cite[^>]*>/g, '').replace(/<\/cite>/g, '');
+}
+
 const FALLBACK_LABELS: Record<string, string> = {
   'geopolitics': 'Geopolitics',
   'canadian-politics': 'Canadian Politics',
@@ -188,10 +192,10 @@ function parseBriefingJson(text: string, date: string): Briefing {
     return {
       slug,
       label,
-      headline: s.headline || s.title_headline || s.heading || '',
-      digest: s.digest || s.summary_short || s.brief || '',
-      summary: s.summary || s.context || s.overview || '',
-      full: s.full || s.full_text || s.body || s.content || '',
+      headline: stripCitations(s.headline || s.title_headline || s.heading || ''),
+      digest: stripCitations(s.digest || s.summary_short || s.brief || ''),
+      summary: stripCitations(s.summary || s.context || s.overview || ''),
+      full: stripCitations(s.full || s.full_text || s.body || s.content || ''),
     };
   });
 
