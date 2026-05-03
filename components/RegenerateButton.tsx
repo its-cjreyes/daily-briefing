@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 type Status = 'idle' | 'loading' | 'error' | 'updated';
 
@@ -22,6 +23,7 @@ function todayKey(): string {
 }
 
 export default function RegenerateButton() {
+  const router = useRouter();
   const [status, setStatus] = useState<Status>('idle');
   const [updatedTime, setUpdatedTime] = useState<string | null>(null);
 
@@ -43,7 +45,9 @@ export default function RegenerateButton() {
 
       const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       localStorage.setItem(todayKey(), time);
-      window.location.reload();
+      setUpdatedTime(time);
+      setStatus('updated');
+      router.refresh(); // re-runs server components in place; client state is preserved
     } catch {
       setStatus('error');
       setTimeout(() => setStatus(updatedTime ? 'updated' : 'idle'), 3000);

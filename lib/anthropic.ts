@@ -181,12 +181,10 @@ function parseBriefingJson(text: string, date: string): Briefing {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const sections: BriefingSection[] = parsed.sections.map((s: any, i: number) => {
-    const slug: string =
-      (s.slug || s.id || s.section_id || String(i));
-    // Use || (not ??) so empty strings also fall through to the fallback
-    const rawLabel = s.label || s.name || s.title || s.category || s.section_name || s.section_label;
-    const label: string =
-      (rawLabel && String(rawLabel).trim()) || FALLBACK_LABELS[slug] || slug;
+    const slug: string = String(s.slug || s.id || s.section_id || '').trim() || String(i);
+    // FALLBACK_LABELS is the primary source — model label is only used for unknown slugs
+    const modelLabel = String(s.label || s.name || s.title || s.category || s.section_name || s.section_label || '').trim();
+    const label: string = FALLBACK_LABELS[slug] || modelLabel || slug;
     return {
       slug,
       label,
